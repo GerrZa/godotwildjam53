@@ -1,0 +1,135 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://scr/level/lobby.gd" type="Script" id=1]
+[ext_resource path="res://asset/level/lobby/room/working_room1.png" type="Texture" id=2]
+[ext_resource path="res://asset/level/lobby/room/working_room2.png" type="Texture" id=3]
+[ext_resource path="res://asset/level/lobby/room/working_room3.png" type="Texture" id=4]
+[ext_resource path="res://asset/level/lobby/obj/table_fan1.png" type="Texture" id=5]
+[ext_resource path="res://scr/obj/tablefan/table_fan.gd" type="Script" id=6]
+[ext_resource path="res://scr/level/room/room.gd" type="Script" id=7]
+[ext_resource path="res://asset/ui/lobby/room_change/left_a.png" type="Texture" id=8]
+[ext_resource path="res://asset/ui/lobby/room_change/right_d.png" type="Texture" id=9]
+[ext_resource path="res://scr/obj/fire_wood/firewood_obj.gd" type="Script" id=10]
+[ext_resource path="res://asset/level/lobby/obj/fire_wood.png" type="Texture" id=11]
+[ext_resource path="res://asset/ui/timer/bg.png" type="Texture" id=12]
+[ext_resource path="res://asset/ui/timer/progress.png" type="Texture" id=13]
+[ext_resource path="res://asset/ui/timer/frame.png" type="Texture" id=14]
+
+[sub_resource type="CanvasItemMaterial" id=2]
+blend_mode = 1
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 18, 13 )
+
+[node name="lobby" type="Node2D"]
+script = ExtResource( 1 )
+init_room = NodePath("main_room")
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="main_room" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+centered = false
+script = ExtResource( 7 )
+left_room_path = NodePath("../fan_room")
+right_room_path = NodePath("../fire_room")
+
+[node name="left" type="Sprite" parent="main_room"]
+modulate = Color( 1, 1, 1, 0.2 )
+material = SubResource( 2 )
+position = Vector2( 2, 86 )
+texture = ExtResource( 8 )
+centered = false
+
+[node name="right" type="Sprite" parent="main_room"]
+modulate = Color( 1, 1, 1, 0.2 )
+material = SubResource( 2 )
+position = Vector2( 238, 86 )
+texture = ExtResource( 9 )
+centered = false
+
+[node name="fan_room" type="Sprite" parent="."]
+position = Vector2( -250, 0 )
+texture = ExtResource( 3 )
+centered = false
+script = ExtResource( 7 )
+right_room_path = NodePath("../main_room")
+
+[node name="right2" type="Sprite" parent="fan_room"]
+modulate = Color( 1, 1, 1, 0.2 )
+material = SubResource( 2 )
+position = Vector2( 238, 86 )
+texture = ExtResource( 9 )
+centered = false
+
+[node name="fire_room" type="Sprite" parent="."]
+position = Vector2( 250, 0 )
+texture = ExtResource( 4 )
+centered = false
+script = ExtResource( 7 )
+left_room_path = NodePath("../main_room")
+
+[node name="left2" type="Sprite" parent="fire_room"]
+modulate = Color( 1, 1, 1, 0.2 )
+material = SubResource( 2 )
+position = Vector2( 2, 86 )
+texture = ExtResource( 8 )
+centered = false
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+current = true
+
+[node name="table_fan" type="Node2D" parent="."]
+position = Vector2( -190, 22 )
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="click_area" type="Area2D" parent="table_fan"]
+position = Vector2( 31, 91 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="table_fan/click_area"]
+position = Vector2( -0.5, 0 )
+shape = SubResource( 1 )
+
+[node name="fan_sprite" type="Sprite" parent="table_fan"]
+texture = ExtResource( 5 )
+centered = false
+hframes = 2
+
+[node name="wood" type="Node2D" parent="."]
+position = Vector2( 376, 67 )
+scale = Vector2( 1, 0.997367 )
+script = ExtResource( 10 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="click_area2" type="Area2D" parent="wood"]
+position = Vector2( 20, 24 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="wood/click_area2"]
+shape = SubResource( 1 )
+
+[node name="wood_sprite" type="Sprite" parent="wood"]
+texture = ExtResource( 11 )
+centered = false
+hframes = 2
+
+[node name="TextureProgress" type="TextureProgress" parent="."]
+margin_left = 25.0
+margin_top = 176.0
+margin_right = 225.0
+margin_bottom = 181.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+texture_under = ExtResource( 12 )
+texture_over = ExtResource( 14 )
+texture_progress = ExtResource( 13 )
+fill_mode = 6
+
+[connection signal="input_event" from="table_fan/click_area" to="table_fan" method="_on_click_area_input_event"]
+[connection signal="input_event" from="wood/click_area2" to="wood" method="_on_click_area2_input_event"]
