@@ -1,4 +1,4 @@
-extends KinematicBody2D
+extends StateMachine
 
 
 # Declare member variables here. Examples:
