@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://scr/actor/player/hand_achor.gd" type="Script" id=1]
 [ext_resource path="res://scr/actor/player/player.gd" type="Script" id=2]
@@ -8,12 +8,14 @@
 [ext_resource path="res://scr/actor/player/state/run.gd" type="Script" id=6]
 [ext_resource path="res://scr/actor/player/statemachine.gd" type="Script" id=7]
 [ext_resource path="res://scr/actor/player/get_input.gd" type="Script" id=8]
+[ext_resource path="res://scr/actor/player/shoot.gd" type="Script" id=9]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 3.00001
 height = 3.99999
 
 [node name="player" type="KinematicBody2D"]
+collision_mask = 4
 script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -49,10 +51,17 @@ script = ExtResource( 6 )
 [node name="get_input" type="Node" parent="statemachine"]
 script = ExtResource( 8 )
 
+[node name="shoot" type="Node" parent="statemachine"]
+script = ExtResource( 9 )
+
 [node name="shoot_timer" type="Timer" parent="."]
 unique_name_in_owner = true
 one_shot = true
 
 [node name="dash_timer" type="Timer" parent="."]
+unique_name_in_owner = true
+one_shot = true
+
+[node name="shoot_shock_timer" type="Timer" parent="."]
 unique_name_in_owner = true
 one_shot = true

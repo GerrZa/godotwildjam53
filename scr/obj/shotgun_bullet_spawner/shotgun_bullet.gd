@@ -1,11 +1,13 @@
 extends Node2D
 
-export var angle_per_bullet := 15
+export var angle_per_bullet := 12
 var direction = Vector2.RIGHT
 
 export var bullet_count = 3
 
 var bullet = preload("res://scr/obj/base_bullet.tscn")
+
+var can_destroy := false
 
 func start(shoot_direction):
 	
@@ -21,5 +23,9 @@ func start(shoot_direction):
 		
 		bullet_ins.apply_velocity(direction.rotated(deg2rad(start_angle_direction + (angle_per_bullet * i))))
 		
+	can_destroy = true
 	
-	
+
+func _process(delta):
+	if get_children().empty() and can_destroy:
+		queue_free()

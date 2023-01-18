@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scr/actor/player/player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
-[ext_resource path="res://scr/obj/controller.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scr/level/main_room/level1.gd" type="Script" id=3]
+[ext_resource path="res://scr/tool/cursor.tscn" type="PackedScene" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 170, 6 )
@@ -10,15 +11,30 @@ extents = Vector2( 170, 6 )
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 6, 127.5 )
 
-[node name="world" type="Node2D"]
+[node name="world" type="YSort"]
+script = ExtResource( 3 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="cursor" parent="CanvasLayer" instance=ExtResource( 4 )]
+position = Vector2( 12.0254, -115.683 )
+
+[node name="center_anchor" type="Position2D" parent="."]
+position = Vector2( 170, 127 )
+
+[node name="camera_handler" type="Position2D" parent="center_anchor"]
+
+[node name="Camera2D" type="Camera2D" parent="center_anchor/camera_handler"]
+current = true
+smoothing_enabled = true
+smoothing_speed = 7.0
 
 [node name="player" parent="." instance=ExtResource( 1 )]
 position = Vector2( 119, 108 )
 
-[node name="controller" parent="player" instance=ExtResource( 3 )]
-position = Vector2( -20, 3 )
-
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
 __meta__ = {
 "_edit_group_": true
 }

@@ -5,6 +5,8 @@ func enter(msg:={}):
 	
 	if msg.has('key'):
 		plr.input_left[msg['key']] = true
+	else:
+		return
 	
 	#Play anim and yield
 	

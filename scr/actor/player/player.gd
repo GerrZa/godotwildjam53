@@ -6,7 +6,7 @@ var p_input = Vector2.ZERO
 
 var speed = 90
 
-var dash_speed = 350
+var dash_speed = 400
 var dash_cd = 0.75
 
 var acceleration = 20
@@ -20,27 +20,33 @@ var input_left = {
 	'shoot' : true,
 }
 
+var controller = preload("res://scr/obj/controller.tscn")
+
 # Input Strenght
 var up_str = 0
 var down_str = 0
 var right_str = 0
 var left_str = 0
 signal event(name)
+
 var fire_delay = 0.5
+var shoot_shock_time = 0.4
+var shoot_knockback_f = 250
+var shoot_friction = 20
+
+var shotgun_bullet = preload("res://scr/obj/shotgun_bullet_spawner/shotgun_bullet.tscn")
 
 var invincible = false
 var invincible_duration = 1.6
 
 func _ready():
 	
+	get_tree().current_scene.player = self
+	
 	for state in $statemachine.get_children():
 		connect("event",state,'event_listener')
 
 func _physics_process(delta):
-	
-	print(
-		String(input_left['up']) + String(input_left['down']) + String(input_left['right']) + String(input_left['left']) + String(input_left['shoot'])
-	)
 	
 	if input_left['right']:
 		right_str = Input.get_action_strength("ui_right")
@@ -97,10 +103,16 @@ func take_damage():
 	avaiable_input.shuffle()
 	input_left[avaiable_input[0]] = false
 	
+	var controller_ins = controller.instance()
+	get_tree().current_scene.add_child(controller_ins)
+	controller_ins.global_position = global_position
+	controller_ins.key = avaiable_input[0]
+	controller_ins.start()
 	
+
 func get_input(input_name := 'left'):
 	
 	emit_signal("event",'get_input')
 	
-	$statemachine.transition_to('')
+	$statemachine.transition_to('get_input',{'key':input_name})
 

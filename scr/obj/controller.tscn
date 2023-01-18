@@ -11,6 +11,8 @@ height = 9.99999
 extents = Vector2( 14, 12 )
 
 [node name="controller" type="KinematicBody2D"]
+collision_layer = 0
+collision_mask = 4
 script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -29,6 +31,7 @@ margin_right = 22.0
 margin_bottom = -14.0
 
 [node name="player_detect_area" type="Area2D" parent="."]
+collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player_detect_area"]
 shape = SubResource( 2 )

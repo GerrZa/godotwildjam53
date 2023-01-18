@@ -3,5 +3,4 @@
 [ext_resource path="res://scr/obj/shotgun_bullet_spawner/shotgun_bullet.gd" type="Script" id=1]
 
 [node name="spawner" type="Node2D"]
-position = Vector2( 81, 54 )
 script = ExtResource( 1 )
