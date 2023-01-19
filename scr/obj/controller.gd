@@ -19,10 +19,14 @@ func start():
 
 func _physics_process(delta):
 	
+	$Label.text = key
+	
 	motion = direction * speed
 	
 	var obj = move_and_collide(motion * delta)
 	if obj:
+		randomize()
+		
 		direction = obj.normal.rotated(deg2rad(rand_range(-60,60)))
 
 func _on_player_detect_area_body_exited(body):

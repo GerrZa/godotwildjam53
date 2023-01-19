@@ -16,7 +16,7 @@ func _physics_process(delta):
 	
 	if get_overlapping_bodies().empty() == false:
 		if get_overlapping_bodies()[0] is KinematicBody2D:
-			get_overlapping_bodies()[0].emit_signal('event','take_damage')
+			get_overlapping_bodies()[0].emit_signal('take_damage',global_position.direction_to(get_overlapping_bodies()[0].global_position))
 		elif get_overlapping_bodies()[0] is StaticBody2D:
 			pass
 		queue_free()

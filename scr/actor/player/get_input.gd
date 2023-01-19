@@ -8,10 +8,6 @@ func enter(msg:={}):
 	else:
 		return
 	
-	#Play anim and yield
-	
-	plr.make_invincible()
-	
 	if plr.p_input != Vector2.ZERO:
 		state_machine.transition_to('run')
 	else:

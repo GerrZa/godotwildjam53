@@ -76,11 +76,11 @@ func _physics_process(delta):
 func make_invincible():
 	invincible = true
 	
-	# Play anim
+	$invincible_anim.play("blinking")
 	
 	yield(get_tree().create_timer(invincible_duration),"timeout")
 	
-	#Stop anim
+	$invincible_anim.play("normal")
 	
 	invincible = false
 
@@ -102,6 +102,8 @@ func take_damage():
 	
 	avaiable_input.shuffle()
 	input_left[avaiable_input[0]] = false
+	
+	make_invincible()
 	
 	var controller_ins = controller.instance()
 	get_tree().current_scene.add_child(controller_ins)
