@@ -4,9 +4,9 @@
 [ext_resource path="res://scr/actor/enemy/dash_enemy/dash_enemy.gd" type="Script" id=2]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/state_machine.gd" type="Script" id=3]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/aim.gd" type="Script" id=4]
-[ext_resource path="res://scr/actor/enemy/dash_enemy/idle.gd" type="Script" id=5]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/slowdown.gd" type="Script" id=6]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/dash.gd" type="Script" id=7]
+[ext_resource path="res://scr/actor/enemy/dash_enemy/appearing.gd" type="Script" id=8]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 7.00001
@@ -17,6 +17,8 @@ radius = 13.0
 height = 9.99996
 
 [node name="dash_enemy" type="KinematicBody2D"]
+collision_layer = 2
+collision_mask = 4
 script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -37,14 +39,13 @@ shape = SubResource( 2 )
 
 [node name="state_machine" type="Node" parent="."]
 script = ExtResource( 3 )
+init_state = NodePath("appearing")
 
-[node name="appering" type="Node" parent="state_machine"]
+[node name="appearing" type="Node" parent="state_machine"]
+script = ExtResource( 8 )
 
 [node name="aim" type="Node" parent="state_machine"]
 script = ExtResource( 4 )
-
-[node name="idle" type="Node" parent="state_machine"]
-script = ExtResource( 5 )
 
 [node name="dash" type="Node" parent="state_machine"]
 script = ExtResource( 7 )
@@ -52,5 +53,8 @@ script = ExtResource( 7 )
 [node name="slowdown" type="Node" parent="state_machine"]
 script = ExtResource( 6 )
 
-[node name="aimming_time" type="Timer" parent="."]
+[node name="aimming_timer" type="Timer" parent="."]
+unique_name_in_owner = true
+
+[node name="appearing_timer" type="Timer" parent="."]
 unique_name_in_owner = true

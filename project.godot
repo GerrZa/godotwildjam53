@@ -42,6 +42,10 @@ config/name="godotwildjam53"
 run/main_scene="res://scr/level/main_room/level1.tscn"
 config/icon="res://icon.png"
 
+[debug]
+
+settings/fps/force_fps=60
+
 [display]
 
 window/size/width=340

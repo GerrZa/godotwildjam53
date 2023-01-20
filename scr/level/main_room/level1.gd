@@ -2,6 +2,10 @@ extends YSort
 
 var player = null
 
+enum WEATHER {NORMAL,HOT,COLD}
+
+var current_weather = WEATHER.NORMAL
+
 func _process(delta):
 	
 	if player != null:
