@@ -29,7 +29,7 @@ var right_str = 0
 var left_str = 0
 signal event(name)
 
-var fire_delay = 0.5
+var fire_delay = 0.8
 var shoot_shock_time = 0.4
 var shoot_knockback_f = 250
 var shoot_friction = 20
@@ -47,6 +47,9 @@ func _ready():
 		connect("event",state,'event_listener')
 
 func _physics_process(delta):
+	
+	if Input.is_action_just_pressed("ui_accept"):
+		emit_signal('event','take_damage')
 	
 	if input_left['right']:
 		right_str = Input.get_action_strength("ui_right")

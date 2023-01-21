@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scr/obj/base_bullet.gd" type="Script" id=1]
-[ext_resource path="res://asset/particle/bullet.png" type="Texture" id=2]
+[ext_resource path="res://asset/particle/bullet_v2.png" type="Texture" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 8, 6 )
+extents = Vector2( 9, 5 )
 
 [node name="bullet" type="Area2D"]
 collision_layer = 0

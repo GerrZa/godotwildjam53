@@ -11,6 +11,8 @@ var is_moving := true
 
 signal take_damage(dir)
 
+var hp = 3
+
 func _ready():
 	
 	$CollisionShape2D.disabled = true
@@ -45,7 +47,12 @@ func _physics_process(delta):
 			direction = obj.normal.rotated(deg2rad(rand_range(-60,60)))
 
 func on_take_damage(dir):
-	queue_free()
+	if hp > 1:
+		hp -= 1
+		
+		direction = dir
+	else:
+		queue_free()
 
 
 func _on_hurtbox_body_entered(body):

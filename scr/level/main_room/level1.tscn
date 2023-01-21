@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scr/actor/player/player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 [ext_resource path="res://scr/level/main_room/level1.gd" type="Script" id=3]
 [ext_resource path="res://scr/tool/cursor.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scr/level/main_room/Camera2D.gd" type="Script" id=5]
+[ext_resource path="res://scr/actor/enemy/bounce_enemy/bounce_enemy.tscn" type="PackedScene" id=6]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 170, 6 )
@@ -76,3 +77,10 @@ texture = ExtResource( 2 )
 
 [node name="player" parent="." instance=ExtResource( 1 )]
 position = Vector2( 119, 108 )
+
+[node name="spawn_timer" type="Timer" parent="."]
+unique_name_in_owner = true
+one_shot = true
+
+[node name="bounce_enemy" parent="." instance=ExtResource( 6 )]
+position = Vector2( 237, 113 )
