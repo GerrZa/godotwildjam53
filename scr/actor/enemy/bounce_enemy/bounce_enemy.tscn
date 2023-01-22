@@ -1,15 +1,118 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scr/actor/enemy/bounce_enemy/bounce_enemy.gd" type="Script" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://asset/actor/enemy/bouncer_sprite.png" type="Texture" id=2]
+[ext_resource path="res://asset/sfx/hit_wall_sfx.wav" type="AudioStream" id=3]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 6.00001
-height = 7.99998
+radius = 8.00004
+height = 9.99991
+
+[sub_resource type="Shader" id=9]
+code = "shader_type canvas_item;
+
+uniform float time:hint_range(0.0, 1.57, 0.001) = 1.0;
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,96.233))) * 43758.5453);
+}
+
+void fragment()
+{
+	vec2 texture_resolution = 1.0 / TEXTURE_PIXEL_SIZE;
+	vec2 within_texture_pixel=floor(UV * texture_resolution);
+	vec4 color= texture(TEXTURE,UV);
+	
+	if(sin(time) > rand(within_texture_pixel))
+		COLOR = color;
+	else
+		COLOR = vec4(0.0,0.0,0.0,0.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=10]
+resource_local_to_scene = true
+shader = SubResource( 9 )
+shader_param/time = 0.0
+
+[sub_resource type="Shader" id=11]
+code = "shader_type canvas_item;
+
+uniform bool active = false;
+
+void fragment() {
+	vec4 previous_color = texture(TEXTURE, UV);
+	vec4 white_color = vec4(1.0, 1.0, 1.0, previous_color.a);
+	vec4 new_color = previous_color;
+	if (active == true)
+	{
+		new_color = white_color
+	}
+	COLOR = new_color;
+}"
+
+[sub_resource type="ShaderMaterial" id=12]
+shader = SubResource( 11 )
+shader_param/active = true
 
 [sub_resource type="CapsuleShape2D" id=2]
-radius = 12.0
-height = 5.99997
+radius = 10.0
+height = 9.99996
+
+[sub_resource type="Animation" id=5]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Icon:material:shader_param/time")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Icon:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "appear"
+length = 0.5
+step = 0.07
+tracks/0/type = "value"
+tracks/0/path = NodePath("Icon:material:shader_param/time")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.35 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.57 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Icon:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.21, 0.28, 0.35, 0.42 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3 ]
+}
 
 [node name="bounce_enemy" type="KinematicBody2D"]
 collision_layer = 2
@@ -20,11 +123,25 @@ script = ExtResource( 1 )
 rotation = 1.57079
 shape = SubResource( 1 )
 
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color( 0, 0, 0, 0.415686 )
+polygon = PoolVector2Array( -10, -2, -10, 2, -8, 4, 0, 5, 8, 4, 10, 2, 10, -2, 8, -4, 0, -5, -8, -4 )
+
 [node name="Icon" type="Sprite" parent="."]
-position = Vector2( -9, -18 )
-scale = Vector2( 0.28125, 0.28125 )
+material = SubResource( 10 )
+position = Vector2( -13, -26 )
 texture = ExtResource( 2 )
 centered = false
+hframes = 5
+
+[node name="flashing_sprite" type="Sprite" parent="Icon"]
+unique_name_in_owner = true
+visible = false
+material = SubResource( 12 )
+texture = ExtResource( 2 )
+centered = false
+hframes = 5
+frame = 3
 
 [node name="appear_timer" type="Timer" parent="."]
 unique_name_in_owner = true
@@ -36,5 +153,15 @@ unique_name_in_owner = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hurtbox"]
 rotation = 1.57079
 shape = SubResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "appear"
+anims/RESET = SubResource( 5 )
+anims/appear = SubResource( 6 )
+
+[node name="wallhit_sfx_player" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 3 )
+volume_db = -15.294
 
 [connection signal="body_entered" from="hurtbox" to="." method="_on_hurtbox_body_entered"]

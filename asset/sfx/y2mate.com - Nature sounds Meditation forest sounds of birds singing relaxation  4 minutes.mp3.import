@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/y2mate.com - Nature sounds Meditation forest sounds of birds singing relaxation  4 minutes.mp3-b1ed544ba8bcbb6204fad19f52a98431.mp3str"
+
+[deps]
+
+source_file="res://asset/sfx/y2mate.com - Nature sounds Meditation forest sounds of birds singing relaxation  4 minutes.mp3"
+dest_files=[ "res://.import/y2mate.com - Nature sounds Meditation forest sounds of birds singing relaxation  4 minutes.mp3-b1ed544ba8bcbb6204fad19f52a98431.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

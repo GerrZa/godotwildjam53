@@ -11,10 +11,15 @@ func enter(msg:={}):
 	var mouse_coor = plr.global_position.direction_to(plr.get_global_mouse_position())
 	
 	get_tree().current_scene.add_child(shotgun_bullet_ins)
-	shotgun_bullet_ins.global_position = plr.global_position + Vector2(0,-10)
+	shotgun_bullet_ins.global_position = $"%particle".global_position
 	shotgun_bullet_ins.start(mouse_coor)
 	
 	plr.motion = mouse_coor * -1 * plr.shoot_knockback_f
+	
+	$"%shoot_sfx_player".play()
+	
+	$"%particle_animplayer".play("shoot")
+	get_tree().current_scene.cam.shake(2,0.1)
 	
 	state_finished = true
 

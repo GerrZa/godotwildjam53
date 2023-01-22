@@ -1,11 +1,70 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://scr/actor/player/player.tscn" type="PackedScene" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://asset/ui/Mystery Font (1).ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://scr/level/main_room/level1.gd" type="Script" id=3]
 [ext_resource path="res://scr/tool/cursor.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scr/level/main_room/Camera2D.gd" type="Script" id=5]
-[ext_resource path="res://scr/actor/enemy/bounce_enemy/bounce_enemy.tscn" type="PackedScene" id=6]
+[ext_resource path="res://asset/ui/indicator.png" type="Texture" id=6]
+[ext_resource path="res://scr/ui/base_indicator.gd" type="Script" id=7]
+[ext_resource path="res://asset/level/bg.png" type="Texture" id=8]
+[ext_resource path="res://asset/sfx/bgm.wav" type="AudioStream" id=9]
+
+[sub_resource type="DynamicFont" id=7]
+size = 8
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_mipmaps = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="Shader" id=3]
+code = "// CC0 licence
+// Credit Bramwell Williams
+
+shader_type canvas_item;
+
+uniform float circle_size : hint_range(0,1) = 0.5f;
+
+void fragment(){
+	if (distance(vec2(0.5,0.5), UV) < circle_size){
+		COLOR.a = 0.0f;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+shader_param/circle_size = 0.0
+
+[sub_resource type="Animation" id=6]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:material:shader_param/circle_size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "start"
+length = 1.7
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:material:shader_param/circle_size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 1, 1.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.08, 0.08, 1.0 ]
+}
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 170, 6 )
@@ -14,12 +73,171 @@ extents = Vector2( 170, 6 )
 extents = Vector2( 6, 127.5 )
 
 [node name="world" type="YSort"]
+scale = Vector2( 1.04735, 1.04688 )
 script = ExtResource( 3 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
+[node name="input_indicator" type="Node2D" parent="CanvasLayer"]
+modulate = Color( 1, 1, 1, 0.52549 )
+
+[node name="base_shoot" type="Node2D" parent="CanvasLayer/input_indicator"]
+position = Vector2( 313, 222 )
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_group_": true
+}
+input_name = "shoot"
+
+[node name="frame" type="Sprite" parent="CanvasLayer/input_indicator/base_shoot"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 6
+
+[node name="normal" type="Sprite" parent="CanvasLayer/input_indicator/base_shoot"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+
+[node name="cross" type="Sprite" parent="CanvasLayer/input_indicator/base_shoot"]
+visible = false
+position = Vector2( 1, -1 )
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 5
+
+[node name="base_left" type="Node2D" parent="CanvasLayer/input_indicator"]
+position = Vector2( 247, 222 )
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="frame" type="Sprite" parent="CanvasLayer/input_indicator/base_left"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 7
+
+[node name="normal" type="Sprite" parent="CanvasLayer/input_indicator/base_left"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 4
+
+[node name="cross" type="Sprite" parent="CanvasLayer/input_indicator/base_left"]
+visible = false
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 5
+
+[node name="base_right" type="Node2D" parent="CanvasLayer/input_indicator"]
+position = Vector2( 285, 222 )
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_group_": true
+}
+input_name = "right"
+
+[node name="frame" type="Sprite" parent="CanvasLayer/input_indicator/base_right"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 7
+
+[node name="normal" type="Sprite" parent="CanvasLayer/input_indicator/base_right"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 2
+
+[node name="cross" type="Sprite" parent="CanvasLayer/input_indicator/base_right"]
+visible = false
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 5
+
+[node name="base_up" type="Node2D" parent="CanvasLayer/input_indicator"]
+position = Vector2( 266, 203 )
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_group_": true
+}
+input_name = "up"
+
+[node name="frame" type="Sprite" parent="CanvasLayer/input_indicator/base_up"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 7
+
+[node name="normal" type="Sprite" parent="CanvasLayer/input_indicator/base_up"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 1
+
+[node name="cross" type="Sprite" parent="CanvasLayer/input_indicator/base_up"]
+visible = false
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 5
+
+[node name="base_down" type="Node2D" parent="CanvasLayer/input_indicator"]
+position = Vector2( 266, 222 )
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_group_": true
+}
+input_name = "down"
+
+[node name="frame" type="Sprite" parent="CanvasLayer/input_indicator/base_down"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 7
+
+[node name="normal" type="Sprite" parent="CanvasLayer/input_indicator/base_down"]
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 3
+
+[node name="cross" type="Sprite" parent="CanvasLayer/input_indicator/base_down"]
+visible = false
+texture = ExtResource( 6 )
+centered = false
+hframes = 8
+frame = 5
+
 [node name="cursor" parent="CanvasLayer" instance=ExtResource( 4 )]
 position = Vector2( 12.0254, -115.683 )
+
+[node name="kill_counter" type="Label" parent="CanvasLayer"]
+unique_name_in_owner = true
+margin_left = 157.0
+margin_top = 15.0
+margin_right = 197.0
+margin_bottom = 29.0
+custom_fonts/font = SubResource( 7 )
+text = "kill(s) : 0"
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource( 4 )
+margin_top = -42.0
+margin_right = 340.0
+margin_bottom = 298.0
+color = Color( 0.0313726, 0.0352941, 0.0705882, 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer/ColorRect"]
+unique_name_in_owner = true
+anims/RESET = SubResource( 6 )
+anims/start = SubResource( 5 )
 
 [node name="center_anchor" type="Position2D" parent="."]
 position = Vector2( 170, 127 )
@@ -27,10 +245,13 @@ position = Vector2( 170, 127 )
 [node name="camera_handler" type="Position2D" parent="center_anchor"]
 
 [node name="Camera2D" type="Camera2D" parent="center_anchor/camera_handler"]
+unique_name_in_owner = true
 current = true
 smoothing_enabled = true
 smoothing_speed = 7.0
 script = ExtResource( 5 )
+
+[node name="Timer" type="Timer" parent="center_anchor/camera_handler/Camera2D"]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 collision_layer = 4
@@ -38,6 +259,17 @@ collision_mask = 0
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="ColorRect" type="ColorRect" parent="StaticBody2D"]
+margin_left = -29.0
+margin_top = -23.0
+margin_right = 370.0
+margin_bottom = 288.0
+color = Color( 0.0313726, 0.0352941, 0.0705882, 1 )
+
+[node name="Bg" type="Sprite" parent="StaticBody2D"]
+texture = ExtResource( 8 )
+centered = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 position = Vector2( 170, 6 )
@@ -55,32 +287,16 @@ shape = SubResource( 2 )
 position = Vector2( 6, 127.5 )
 shape = SubResource( 2 )
 
-[node name="Icon" type="Sprite" parent="StaticBody2D"]
-position = Vector2( 6, 127.5 )
-scale = Vector2( 0.1875, 3.98438 )
-texture = ExtResource( 2 )
-
-[node name="Icon2" type="Sprite" parent="StaticBody2D"]
-position = Vector2( 334, 127.5 )
-scale = Vector2( 0.1875, 3.98438 )
-texture = ExtResource( 2 )
-
-[node name="Icon3" type="Sprite" parent="StaticBody2D"]
-position = Vector2( 170, 6 )
-scale = Vector2( 5.3125, 0.1875 )
-texture = ExtResource( 2 )
-
-[node name="Icon4" type="Sprite" parent="StaticBody2D"]
-position = Vector2( 170, 249 )
-scale = Vector2( 5.3125, 0.1875 )
-texture = ExtResource( 2 )
+[node name="bg_sound" type="AudioStreamPlayer" parent="StaticBody2D"]
+stream = ExtResource( 9 )
+volume_db = -4.006
+autoplay = true
 
 [node name="player" parent="." instance=ExtResource( 1 )]
-position = Vector2( 119, 108 )
+position = Vector2( 169.953, 135.641 )
 
 [node name="spawn_timer" type="Timer" parent="."]
 unique_name_in_owner = true
 one_shot = true
 
-[node name="bounce_enemy" parent="." instance=ExtResource( 6 )]
-position = Vector2( 237, 113 )
+[connection signal="timeout" from="spawn_timer" to="." method="_on_spawn_timer_timeout"]

@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=31 format=2]
 
-[ext_resource path="res://icon.png" type="Texture" id=1]
+[ext_resource path="res://asset/actor/enemy/dasher.png" type="Texture" id=1]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/dash_enemy.gd" type="Script" id=2]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/state_machine.gd" type="Script" id=3]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/aim.gd" type="Script" id=4]
+[ext_resource path="res://asset/sfx/sword_swing.wav" type="AudioStream" id=5]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/slowdown.gd" type="Script" id=6]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/dash.gd" type="Script" id=7]
 [ext_resource path="res://scr/actor/enemy/dash_enemy/appearing.gd" type="Script" id=8]
@@ -12,9 +13,201 @@
 radius = 7.00001
 height = 10.0
 
+[sub_resource type="Shader" id=19]
+code = "shader_type canvas_item;
+
+uniform bool active = false;
+uniform vec4 tint : hint_color = vec4(1., 1., 0., 1);
+
+void fragment() {
+	vec4 tint_copy = tint;
+	vec4 previous_color = texture(TEXTURE, UV);
+	
+	if (active == true)
+	{
+		tint_copy.a = previous_color.a;
+		COLOR = tint_copy;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=20]
+shader = SubResource( 19 )
+shader_param/active = false
+shader_param/tint = Color( 1, 1, 1, 1 )
+
+[sub_resource type="Shader" id=15]
+code = "shader_type canvas_item;
+
+uniform float time:hint_range(0.0, 1.57, 0.001) = 1.0;
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,96.233))) * 43758.5453);
+}
+
+void fragment()
+{
+	vec2 texture_resolution = 1.0 / TEXTURE_PIXEL_SIZE;
+	vec2 within_texture_pixel=floor(UV * texture_resolution);
+	vec4 color= texture(TEXTURE,UV);
+	
+	if(sin(time) > rand(within_texture_pixel))
+		COLOR = color;
+	else
+		COLOR = vec4(0.0,0.0,0.0,0.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=16]
+resource_local_to_scene = true
+shader = SubResource( 15 )
+shader_param/time = 0.0
+
+[sub_resource type="Animation" id=4]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "dash"
+length = 0.1
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 3 ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "idle"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.3, 0.6, 0.8, 0.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 2, 1, 0 ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "slowdown"
+length = 0.392
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.05, 0.1, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 4, 5, 6, 7 ]
+}
+
+[sub_resource type="AnimationNodeAnimation" id=7]
+animation = "dash"
+
+[sub_resource type="AnimationNodeAnimation" id=8]
+animation = "idle"
+
+[sub_resource type="AnimationNodeAnimation" id=9]
+animation = "slowdown"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=10]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=11]
+switch_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=12]
+
+[sub_resource type="AnimationNodeStateMachine" id=13]
+states/dash/node = SubResource( 7 )
+states/dash/position = Vector2( 486, 122.25 )
+states/idle/node = SubResource( 8 )
+states/idle/position = Vector2( 437.25, 42.25 )
+states/slowdown/node = SubResource( 9 )
+states/slowdown/position = Vector2( 688.5, 49.75 )
+transitions = [ "dash", "slowdown", SubResource( 10 ), "slowdown", "idle", SubResource( 11 ), "idle", "dash", SubResource( 12 ) ]
+start_node = "idle"
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id=14]
+
+[sub_resource type="Shader" id=21]
+code = "shader_type canvas_item;
+
+uniform bool active = false;
+
+void fragment() {
+	vec4 previous_color = texture(TEXTURE, UV);
+	vec4 white_color = vec4(1.0, 1.0, 1.0, previous_color.a);
+	vec4 new_color = previous_color;
+	if (active == true)
+	{
+		new_color = white_color
+	}
+	COLOR = new_color;
+}"
+
+[sub_resource type="ShaderMaterial" id=22]
+shader = SubResource( 21 )
+shader_param/active = true
+
 [sub_resource type="CapsuleShape2D" id=2]
 radius = 13.0
 height = 9.99996
+
+[sub_resource type="Animation" id=17]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("anchor/Icon:material:shader_param/time")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=18]
+resource_name = "appear"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("anchor/Icon:material:shader_param/time")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.57 ]
+}
 
 [node name="dash_enemy" type="KinematicBody2D"]
 collision_layer = 2
@@ -25,13 +218,47 @@ script = ExtResource( 2 )
 rotation = 1.57079
 shape = SubResource( 1 )
 
-[node name="Icon" type="Sprite" parent="."]
-position = Vector2( -9, -18 )
-scale = Vector2( 0.28125, 0.28125 )
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color( 0, 0, 0, 0.505882 )
+polygon = PoolVector2Array( -10, -3, -12, -0.0141258, -10, 3, 0, 4, 10, 3, 12, -0.0141258, 10, -3, 0, -4 )
+
+[node name="anchor" type="Node2D" parent="."]
+material = SubResource( 20 )
+
+[node name="Icon" type="Sprite" parent="anchor"]
+unique_name_in_owner = true
+material = SubResource( 16 )
+position = Vector2( -15, -28 )
 texture = ExtResource( 1 )
 centered = false
+hframes = 8
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="anchor/Icon"]
+unique_name_in_owner = true
+anims/RESET = SubResource( 4 )
+anims/dash = SubResource( 5 )
+anims/idle = SubResource( 3 )
+anims/slowdown = SubResource( 6 )
+
+[node name="AnimationTree" type="AnimationTree" parent="anchor/Icon"]
+unique_name_in_owner = true
+tree_root = SubResource( 13 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/playback = SubResource( 14 )
+
+[node name="Icon2" type="Sprite" parent="anchor"]
+unique_name_in_owner = true
+visible = false
+material = SubResource( 22 )
+position = Vector2( -16, -28 )
+texture = ExtResource( 1 )
+centered = false
+hframes = 8
+frame = 2
 
 [node name="hurtbox" type="Area2D" parent="."]
+unique_name_in_owner = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hurtbox"]
 rotation = 1.57079
@@ -58,3 +285,13 @@ unique_name_in_owner = true
 
 [node name="appearing_timer" type="Timer" parent="."]
 unique_name_in_owner = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "appear"
+anims/RESET = SubResource( 17 )
+anims/appear = SubResource( 18 )
+
+[node name="sfx_player" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 5 )
+volume_db = -21.275

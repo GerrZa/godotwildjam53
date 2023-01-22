@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://scr/actor/player/hand_achor.gd" type="Script" id=1]
 [ext_resource path="res://scr/actor/player/player.gd" type="Script" id=2]
@@ -9,10 +9,112 @@
 [ext_resource path="res://scr/actor/player/statemachine.gd" type="Script" id=7]
 [ext_resource path="res://scr/actor/player/get_input.gd" type="Script" id=8]
 [ext_resource path="res://scr/actor/player/shoot.gd" type="Script" id=9]
+[ext_resource path="res://asset/particle/shoot_particle.png" type="Texture" id=10]
+[ext_resource path="res://asset/sfx/shoot.wav" type="AudioStream" id=11]
+[ext_resource path="res://asset/sfx/player_hurt.wav" type="AudioStream" id=12]
+[ext_resource path="res://asset/sfx/player_dash_sfx.wav" type="AudioStream" id=13]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 3.00001
 height = 3.99999
+
+[sub_resource type="Animation" id=12]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 3 ]
+}
+
+[sub_resource type="Animation" id=11]
+resource_name = "shoot"
+length = 0.16
+step = 0.04
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.04, 0.08, 0.12 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3 ]
+}
+
+[sub_resource type="Animation" id=8]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1 ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "idle"
+length = 0.7
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6 ]
+}
+
+[sub_resource type="Animation" id=9]
+resource_name = "run"
+length = 0.7
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 7, 8, 9, 10, 11, 12, 13 ]
+}
+
+[sub_resource type="Animation" id=10]
+resource_name = "run_reverse"
+length = 0.7
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 13, 12, 11, 10, 9, 8, 7 ]
+}
 
 [sub_resource type="Animation" id=2]
 length = 0.001
@@ -71,22 +173,48 @@ script = ExtResource( 2 )
 rotation = 1.57079
 shape = SubResource( 1 )
 
+[node name="Polygon2D" type="Polygon2D" parent="."]
+scale = Vector2( 1.00536, 1 )
+color = Color( 0, 0, 0, 0.427451 )
+polygon = PoolVector2Array( -6.96266, -2, -6.96266, 2, -4.97333, 4, 4.97333, 4, 6.96266, 2, 6.96266, -2, 4.97333, -4, -4.97333, -4 )
+
 [node name="PlayerRaw" type="Sprite" parent="."]
 unique_name_in_owner = true
-position = Vector2( -1.19209e-07, -9.53674e-07 )
+scale = Vector2( 1.00536, 1 )
 texture = ExtResource( 3 )
 centered = false
 offset = Vector2( -8.022, -24 )
 hframes = 14
 
 [node name="hand_achor" type="Node2D" parent="PlayerRaw"]
-position = Vector2( 1.19209e-07, -8 )
+position = Vector2( 0, -7 )
 script = ExtResource( 1 )
 
 [node name="GunHand" type="Sprite" parent="PlayerRaw/hand_achor"]
-position = Vector2( -11, -3 )
+position = Vector2( -10, -3 )
 texture = ExtResource( 4 )
 centered = false
+
+[node name="particle" type="Sprite" parent="PlayerRaw/hand_achor/GunHand"]
+unique_name_in_owner = true
+position = Vector2( 21.936, -6 )
+texture = ExtResource( 10 )
+centered = false
+hframes = 4
+frame = 3
+
+[node name="particle_animplayer" type="AnimationPlayer" parent="PlayerRaw/hand_achor/GunHand/particle"]
+unique_name_in_owner = true
+autoplay = "RESET"
+anims/RESET = SubResource( 12 )
+anims/shoot = SubResource( 11 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerRaw"]
+unique_name_in_owner = true
+anims/RESET = SubResource( 8 )
+anims/idle = SubResource( 5 )
+anims/run = SubResource( 9 )
+anims/run_reverse = SubResource( 10 )
 
 [node name="statemachine" type="Node" parent="."]
 script = ExtResource( 7 )
@@ -116,7 +244,25 @@ one_shot = true
 unique_name_in_owner = true
 one_shot = true
 
+[node name="invincible_timer" type="Timer" parent="."]
+unique_name_in_owner = true
+
 [node name="invincible_anim" type="AnimationPlayer" parent="."]
 anims/RESET = SubResource( 2 )
 anims/blinking = SubResource( 3 )
 anims/normal = SubResource( 4 )
+
+[node name="shoot_sfx_player" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 11 )
+volume_db = -3.059
+
+[node name="hurt_sfx_player" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 12 )
+volume_db = -1.02
+
+[node name="dash_sfx_player" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 13 )
+volume_db = -6.118

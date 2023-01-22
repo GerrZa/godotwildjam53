@@ -4,10 +4,10 @@ extends KinematicBody2D
 var motion = Vector2.ZERO
 var p_input = Vector2.ZERO
 
-var speed = 90
+var speed = 110
 
 var dash_speed = 400
-var dash_cd = 0.75
+var dash_cd = 0.45
 
 var acceleration = 20
 var friction = 25
@@ -29,7 +29,7 @@ var right_str = 0
 var left_str = 0
 signal event(name)
 
-var fire_delay = 0.8
+var fire_delay = 0.6
 var shoot_shock_time = 0.4
 var shoot_knockback_f = 250
 var shoot_friction = 20
@@ -37,7 +37,11 @@ var shoot_friction = 20
 var shotgun_bullet = preload("res://scr/obj/shotgun_bullet_spawner/shotgun_bullet.tscn")
 
 var invincible = false
-var invincible_duration = 1.6
+var invincible_duration = 2
+
+var can_control = false
+
+var can_shoot = false
 
 func _ready():
 	
@@ -48,8 +52,15 @@ func _ready():
 
 func _physics_process(delta):
 	
-	if Input.is_action_just_pressed("ui_accept"):
-		emit_signal('event','take_damage')
+	can_shoot = $"%shoot_timer".is_stopped()
+	
+	if global_position.direction_to(get_global_mouse_position()).x >= 0:
+		$PlayerRaw.flip_h = false
+	elif global_position.direction_to(get_global_mouse_position()).x < 0:
+		$PlayerRaw.flip_h = true
+	
+#	if Input.is_action_just_pressed("ui_accept"):
+#		emit_signal('event','take_damage')
 	
 	if input_left['right']:
 		right_str = Input.get_action_strength("ui_right")
@@ -75,13 +86,18 @@ func _physics_process(delta):
 	p_input.y = down_str - up_str
 	
 	p_input = p_input.normalized()
+	
+	
+	if can_control == false:
+		p_input = Vector2.ZERO
 
 func make_invincible():
 	invincible = true
 	
 	$invincible_anim.play("blinking")
 	
-	yield(get_tree().create_timer(invincible_duration),"timeout")
+	$"%invincible_timer".start(invincible_duration)
+	yield($"%invincible_timer","timeout")
 	
 	$invincible_anim.play("normal")
 	
@@ -97,7 +113,8 @@ func take_damage():
 	
 	#In case no input left player dies
 	if avaiable_input.empty() == true:
-		emit_signal("event","ded")
+		
+		get_tree().current_scene.gameover()
 		
 		return
 	
@@ -107,6 +124,10 @@ func take_damage():
 	input_left[avaiable_input[0]] = false
 	
 	make_invincible()
+	
+	$"%hurt_sfx_player".play()
+	
+	get_tree().current_scene.cam.shake(5,0.2)
 	
 	var controller_ins = controller.instance()
 	get_tree().current_scene.add_child(controller_ins)

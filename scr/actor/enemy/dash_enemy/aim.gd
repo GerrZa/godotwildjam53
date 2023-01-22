@@ -3,6 +3,8 @@ extends State
 func enter(msg:={}):
 	
 	$"%aimming_timer".start(owner.aimming_time)
+	owner.animtree.travel('idle')
+	
 	yield($"%aimming_timer","timeout")
 	
 	state_machine.transition_to('dash')

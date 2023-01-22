@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scr/tool/transitioner.gd" type="Script" id=1]
+
+[sub_resource type="ShaderMaterial" id=2]
+
+[node name="ColorRect" type="ColorRect"]
+pause_mode = 2
+material = SubResource( 2 )
+margin_right = 340.0
+margin_bottom = 255.0
+color = Color( 0.0196078, 0.0117647, 0.0627451, 1 )
+script = ExtResource( 1 )

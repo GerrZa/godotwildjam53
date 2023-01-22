@@ -12,10 +12,13 @@ func _process(delta):
 
 func shake(shake_force, shake_time):
 	
+	$Timer.stop()
+	
 	strength = shake_force
 	
 	set_process(true)
 	
-	yield(get_tree().create_timer(shake_time),"timeout")
+	$Timer.start(shake_time)
+	yield($Timer,"timeout")
 	
 	set_process(false)

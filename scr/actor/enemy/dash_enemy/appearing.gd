@@ -12,4 +12,5 @@ func enter(msg:={}):
 	
 	yield($"%appearing_timer","timeout")
 	
+	owner.appeared = true
 	state_machine.transition_to('aim')
